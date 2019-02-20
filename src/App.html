@@ -1,7 +1,4 @@
 <p>Count: {count}</p>
-<p>Started at {new Date(startedAt).toLocaleTimeString()}</p>
-<p>Last clicked at {new Date(lastClickedAt).toLocaleTimeString()}</p>
-<p>Milliseconds since start: {timePassed}</p>
 <p>BPM: {round(bpm, 2)}</p>
 <button on:click="set({ lastClickedAt: startedAt ? Date.now(): null, count: count + 1, startedAt: startedAt ? startedAt: Date.now() })">TAP</button>
 
