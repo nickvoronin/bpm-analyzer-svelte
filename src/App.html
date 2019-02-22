@@ -1,10 +1,61 @@
-<p>Count: {count}</p>
-<p>BPM: {round(bpm, 2)}</p>
-<button on:click="set({ lastClickedAt: startedAt ? Date.now(): null, count: count + 1, startedAt: startedAt ? startedAt: Date.now() })">TAP</button>
+<svelte:window on:keydown="handleKeyboard(event)" />
+
+<main>
+    <p>Count: {count}</p>
+    <p>BPM: {round(bpm, 2)}</p>
+    <button type="button" on:click="handleClick(event)">Tap</button>
+    <button ref:reset type="reset" on:click="reset()">Reset</button>
+    <div class="circle-ripple"></div>
+</main>
+
+<style>
+    :root {
+      --pulse-interval: 1s;
+    }
+    main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .circle-ripple {
+      background-color: #35ffc3;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      -webkit-animation: ripple var(--pulse-interval) linear infinite;
+              animation: ripple var(--pulse-interval) linear infinite;
+    }
+
+    @keyframes ripple {
+      0% {
+        box-shadow:
+            0 0 0 0 rgba(101, 255, 120, 0.3),
+            0 0 0 1em rgba(101, 255, 120, 0.3),
+            0 0 0 3em rgba(101, 255, 120, 0.3),
+            0 0 0 5em rgba(101, 255, 120, 0.3);
+      }
+      100% {
+        box-shadow:
+            0 0 0 1em rgba(101, 255, 120, 0.3),
+            0 0 0 3em rgba(101, 255, 120, 0.3),
+            0 0 0 5em rgba(101, 255, 120, 0.3),
+            0 0 0 8em rgba(101, 255, 120, 0);
+      }
+    }
+</style>
 
 <script>
     import { round } from 'lodash'
     export default {
+		onstate({ changed, current, previous }) {
+			if (changed.bpm && current.bpm) {
+			    const pulse = 60 / current.bpm ;
+			    console.log('changed.bpm', current.bpm);
+			    console.log('pulse', pulse);
+                document.documentElement.style.setProperty('--pulse-interval', pulse + 's')
+			}
+		},
         helpers: {
             round,
         },
@@ -22,6 +73,34 @@
                     return ((count - 1) * 1000 * 60) / timePassed
                 }
                 return 0;
+            },
+        },
+        methods: {
+            handleClick() {
+                this.calculate();
+            },
+            handleKeyboard({ key }) {
+                if (key === 'Escape') {
+                    this.reset();
+                } else {
+                    this.calculate();
+                }
+            },
+            calculate() {
+                const { startedAt, lastClickedAt, count } = this.get();
+                this.set({
+                    lastClickedAt: startedAt ? Date.now(): null,
+                    count: count + 1,
+                    startedAt: startedAt ? startedAt: Date.now()
+                });
+            },
+            reset() {
+                this.refs.reset.blur()
+                this.set({
+                    startedAt: null,
+                    lastClickedAt: null,
+                    count: 0,
+                })
             },
         }
     }
