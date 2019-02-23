@@ -14,7 +14,7 @@
     {#if count === 0}
         Tap to start
     {:elseif count === 1}
-        ?
+        ???
     {:else}
         {round(bpm, 2)}
     {/if}
@@ -26,7 +26,7 @@
     <div class="buttons">
         <button ref:tap type="button" on:click="handleClick(event)">Tap {count}</button>
         <button ref:reset type="reset" on:click="reset()">
-            <span>Reset</span>
+            <span>Reset (Esc)</span>
         </button>
     </div>
 </main>
