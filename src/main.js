@@ -1,4 +1,5 @@
 import App from './App.html';
+import './normalize.css'
 
 const app = new App({
 	target: document.body,
@@ -8,9 +9,5 @@ const app = new App({
 		lastClickedAt: null,
 	}
 });
-
-// setInterval(() => app.set({ name: Date.now() }), 2000)
-
-window.app = app;
 
 export default app;
