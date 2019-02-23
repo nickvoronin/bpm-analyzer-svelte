@@ -1,52 +1,108 @@
 <svelte:window on:keydown="handleKeyboard(event)" />
 
 <main>
-    <p>Count: {count}</p>
-    <p>BPM: {round(bpm, 2)}</p>
-    <button type="button" on:click="handleClick(event)">Tap</button>
-    <button ref:reset type="reset" on:click="reset()">Reset</button>
-    <div class="circle-ripple"></div>
+    <header>
+        <h1>BPM analyzer</h1>
+    </header>
+
+    <p class="bpm-indicator">
+    {#if count === 0}
+        Tap to start
+    {:elseif count === 1}
+        ?
+    {:else}
+        {round(bpm, 2)}
+    {/if}
+    </p>
+
+    <div on:click="handleKeyboard(event)" class="animation-container">
+        <div class="circle-ripple"></div>
+    </div>
+    <div class="buttons">
+        <button ref:tap type="button" on:click="handleClick(event)">Tap {count}</button>
+        <button ref:reset type="reset" on:click="reset()">
+            <span>Reset</span>
+        </button>
+    </div>
 </main>
 
 <style>
     :root {
-      --pulse-interval: 1s;
+      --pulse-interval: 0.5s;
+      --circle-size: 2;
     }
     main {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         flex-direction: column;
+        background-color: #00aa46;
+        height: 100%;
+    }
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        flex: 1;
+        background: gold;
+        height: 100%;
+    }
+    h1 {
+        margin: auto;
+    }
+    .bpm-indicator {
+        font-size: xx-large;
+        font-weight: bold;
+        flex: 1;
+    }
+    .animation-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex: 5;
+    }
+    .buttons {
+        display: flex;
+        width: 100%;
+        flex: 1;
+    }
+    .buttons button {
+        background-color: #c00091;
+        flex: 1;
+        color: white;
+        font-size: 24px;
     }
     .circle-ripple {
-      background-color: #35ffc3;
-      width: 1em;
-      height: 1em;
-      border-radius: 50%;
-      -webkit-animation: ripple var(--pulse-interval) linear infinite;
-              animation: ripple var(--pulse-interval) linear infinite;
+        margin: auto;
+        background-color: #35ffc3;
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        -webkit-animation: ripple var(--pulse-interval) linear infinite;
+                  animation: ripple var(--pulse-interval) linear infinite;
     }
 
     @keyframes ripple {
       0% {
         box-shadow:
             0 0 0 0 rgba(101, 255, 120, 0.3),
-            0 0 0 1em rgba(101, 255, 120, 0.3),
-            0 0 0 3em rgba(101, 255, 120, 0.3),
-            0 0 0 5em rgba(101, 255, 120, 0.3);
+            0 0 0 calc(var(--circle-size) * 1em) rgba(101, 255, 120, 0.3),
+            0 0 0 calc(var(--circle-size) * 3em) rgba(101, 255, 120, 0.3),
+            0 0 0 calc(var(--circle-size) * 5em) rgba(101, 255, 120, 0.3);
       }
       100% {
         box-shadow:
-            0 0 0 1em rgba(101, 255, 120, 0.3),
-            0 0 0 3em rgba(101, 255, 120, 0.3),
-            0 0 0 5em rgba(101, 255, 120, 0.3),
-            0 0 0 8em rgba(101, 255, 120, 0);
+            0 0 0 calc(var(--circle-size) * 1em) rgba(101, 255, 120, 0.3),
+            0 0 0 calc(var(--circle-size) * 3em) rgba(101, 255, 120, 0.3),
+            0 0 0 calc(var(--circle-size) * 5em) rgba(101, 255, 120, 0.3),
+            0 0 0 calc(var(--circle-size) * 8em) rgba(101, 255, 120, 0);
       }
     }
 </style>
 
 <script>
-    import { round } from 'lodash'
+    import { round } from 'lodash';
     export default {
 		onstate({ changed, current, previous }) {
 			if (changed.bpm && current.bpm) {
@@ -78,6 +134,7 @@
         methods: {
             handleClick() {
                 this.calculate();
+                this.refs.tap.blur();
             },
             handleKeyboard({ key }) {
                 if (key === 'Escape') {
@@ -95,12 +152,13 @@
                 });
             },
             reset() {
-                this.refs.reset.blur()
+                this.refs.reset.blur();
                 this.set({
                     startedAt: null,
                     lastClickedAt: null,
                     count: 0,
-                })
+                });
+                document.documentElement.style.setProperty('--pulse-interval', 0.5 + 's')
             },
         }
     }
