@@ -22,6 +22,8 @@ html {
 
 body {
     margin: 0;
+    /* TODO remove next line, it doesn't belong here, how can I change body padding within the app? */
+    padding: 0;
 }
 
 /**
