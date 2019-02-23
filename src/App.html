@@ -1,6 +1,6 @@
 <svelte:head>
 	<title>BPM analyzer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0" >
 </svelte:head>
 
 <svelte:window on:keydown="handleKeyboard(event)" />
@@ -11,13 +11,13 @@
     </header>
 
     <p class="bpm-indicator">
-    {#if count === 0}
-        Tap to start
-    {:elseif count === 1}
-        ???
-    {:else}
-        {round(bpm, 2)}
-    {/if}
+        {#if count === 0}
+            Tap to start
+        {:elseif count === 1}
+            ???
+        {:else}
+            {round(bpm, 2)}
+        {/if}
     </p>
 
     <div on:click="handleKeyboard(event)" class="animation-container">
@@ -35,6 +35,9 @@
     :root {
       --pulse-interval: 0.5s;
       --circle-size: 2;
+    }
+    body {
+        padding: 0;
     }
     main {
         display: flex;
