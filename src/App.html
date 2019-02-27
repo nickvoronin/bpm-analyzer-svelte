@@ -20,11 +20,9 @@
         {/if}
     </p>
 
-    <div on:click="handleKeyboard(event)" class="animation-container">
-        <div class="circle-ripple"></div>
-    </div>
+    <div on:click="handleKeyboard(event)" class="tap-area"></div>
+    <div class="circle-ripple"></div>
     <div class="buttons">
-        <button ref:tap type="button" on:click="handleClick(event)">Tap {count}</button>
         <button ref:reset type="reset" on:click="reset()">
             <span>Reset (Esc)</span>
         </button>
@@ -60,15 +58,17 @@
         margin: auto;
     }
     .bpm-indicator {
+        position: absolute;
+        top: 20%;
         font-size: xx-large;
         font-weight: bold;
         flex: 1;
     }
-    .animation-container {
+    .tap-area {
         height: 100%;
         width: 100%;
         display: flex;
-        flex: 5;
+        flex: 6;
     }
     .buttons {
         display: flex;
@@ -80,8 +80,11 @@
         flex: 1;
         color: white;
         font-size: 24px;
+        border: none;
     }
     .circle-ripple {
+        position: absolute;
+        top: 50%;
         margin: auto;
         background-color: #35ffc3;
         width: 1em;
@@ -114,9 +117,7 @@
     export default {
 		onstate({ changed, current, previous }) {
 			if (changed.bpm && current.bpm) {
-			    const pulse = 60 / current.bpm ;
-			    console.log('changed.bpm', current.bpm);
-			    console.log('pulse', pulse);
+			    const pulse = 60 / current.bpm;
                 document.documentElement.style.setProperty('--pulse-interval', pulse + 's')
 			}
 		},
